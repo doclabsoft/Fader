@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Gallery with Fade effect</title>
+	
+	<meta content="width=device-width,initial-scale=1" name="viewport">
+	<link rel="stylesheet" type="text/css" href="css/fader.css">
+	<link href='http://fonts.googleapis.com/css?family=Archivo+Narrow' rel='stylesheet' type='text/css'>
+	<style type="text/css">
+	
+	body,
+	html
+	{
+		height: 100%;
+		padding: 0;
+		margin: 0;
+	}
+	body
+	{
+	    overflow: hidden;
+		font-family: 'Archivo Narrow', sans-serif;
+	}
+	.container
+	{
+		width: 300px;
+		margin: 0 auto;
+	}
+	#div-console {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 200px;
+      overflow: auto;
+    }
+	figcaption
+	{
+		position: relative;
+    	color: #333;
+    	text-shadow: none;
+    	text-align: left;
+    	padding: 0 30px;
+    	box-sizing: border-box;
+    	height: 210px;
+    	overflow-y: hidden;
+	}
+	.DD--fader
+	{
+		height: 450px;
+	}
+	.DD--fader--wrapper .DD--slide
+	{
+		background: #fff;
+	}
+/*	.DD--slide:nth-child(2) figure,
+	.DD--slide:nth-child(3) figure
+	{
+		display: none;
+	}*/
+	</style>
+</head>
+<body>
+	<div id="div-console"></div>
+
+	<div class="container" id="content-box">
+		<div class="fader" id="fader-box"></div>
+	</div>
+	<script type="text/javascript" src="../bower_components/closurelibrary/closure/goog/base.js"></script>
+	<script type="text/javascript" src="deps.js"></script>
+	<script src='../bower_components/hammerjs/hammer.js'></script>
+	<script src='js/dynamics.min.js'></script>
+	
+	<script type="text/javascript">
+		goog.require('DD.ui.flickSliders.Fader');
+	    goog.require('goog.debug.DivConsole');
+	    goog.require('goog.debug.Trace');
+	    goog.require('goog.dom');
+	    goog.require('goog.ui.tree.TreeControl');
+
+	    var flick = null;
+		window.onload = function()
+		{
+			var $ = goog.dom.getElement;
+			var divConsole = new goog.debug.DivConsole($('div-console'));
+		    var logger = goog.debug.LogManager.getRoot();
+			var img, figure, figcaption;
+
+			flick = new DD.ui.flickSliders.Fader(
+			{
+				actionTarget : document.getElementById('content-box'),
+				range : 50,
+				changeIndexRange: 30,
+				loop: true,
+				effect: 'lonesome'
+			});
+			flick.render(document.getElementById('fader-box'));
+
+		    divConsole.setCapturing(true);
+		    goog.events.listen(flick, DD.ui.flickSliders.EventType.SLIDEACTION, function(e){goog.log.info(logger, e.type + 'apply action ' + e.action);}, false, this);
+		    goog.events.listen(flick, DD.ui.flickSliders.EventType.INSERT, function(e){goog.log.info(logger, e.type);}, false, this);
+		    goog.events.listen(flick, DD.ui.flickSliders.EventType.DRAGMOVE, function(e){goog.log.info(logger, e.type);}, false, this);
+		    goog.events.listen(flick, DD.ui.flickSliders.EventType.DRAGEND, function(e){goog.log.info(logger, e.type);}, false, this);
+		    goog.events.listen(flick, DD.ui.flickSliders.EventType.SETTLE, function(e){goog.log.info(logger, e.type + ', slide index is: ' + e.index);}, false, this);
+		    goog.events.listen(flick, DD.ui.flickSliders.EventType.CHANGESLIDEINDEX, function(e){goog.log.info(logger, e.type + ', slide index changed to ' + e.index);}, false, this);
+		    goog.events.listen(flick, DD.ui.flickSliders.EventType.REMOVE, function(e){goog.log.info(logger, e.type + ', slide by index ' + e.index + ' removed');}, false, this);
+
+			var caption = ['1. «…по дорогам и тропинкам, изъеденные комарами, со сбитыми в кровь ногами, покрытые потом и пылью, измученные, перепуганные, убитые отчаянием, но твёрдые как сталь в своём единственном убеждении, бегут, идут, бредут, обходя заставы, сотни несчастных, объявленных вне закона за то, что они умеют и хотят лечить и учить свой изнурённый болезнями и погрязший в невежестве народ; за то, что они, подобно богам, создают из глины и камня вторую природу для украшения жизни не знающего красоты народа; за то, что они проникают в тайны природы, надеясь поставить эти тайны на службу своему неумелому, запуганному старинной чертовщиной народу… Беззащитные, добрые, непрактичные, далеко обогнавшие свой век…»', '2. «— Вот что, — сказал Эдик. — Так нельзя. Мы работаем, как дилетанты. Как авторы любительских писем: „Дорогие учёные. У меня который год в подполе происходит подземный стук. Объясните, пожалуйста, как он происходит“. Система нужна. Где у тебя бумага, Витя? Сейчас мы все распишем…»', '3. «Может быть, человек разумный имеет к разуму не большее отношение, чем очковая змея к широко распространённому оптическому устройству?»', '4. «– Грррм, – произнес Лавр Федотович с какой-то новой интонацией. – Кажется, возникло затруднение. Товарищ Фарфуркис, устраните. Было совершенно очевидно, что затруднение действительно возникло и что Фарфуркис пока еще не имеет ни малейшего представления о том, как его устранять.»', '5. «А в действительности, построил ты государство или построил дачу из ворованного материала, к делу это не относится, ибо есть лишь НЕЧТО ДО и НЕЧТО ПОСЛЕ, и жизнь твоя имеет смысл лишь до тех пор, пока ты не осознал это до конца.»', '6. Некогда в наше время любить: автобусы переполнены, в магазинах очереди, ясли на другом конце города, нужно быть очень молодым и очень беззаботным человеком, чтобы оказаться способным на любовь. А любят сейчас только пожилые пары, которым удалось продержаться вместе четверть века, не потонуть в квартирном вопросе, не озвереть от мириад всеразъедающих мелких неудобств, полюбовно поделить между собой власть и обязанности.', '7. «Счастье можно найти только на проторенных путях»… Пушкин любил это повторять. Из Шатобриана, кажется. Или из Монтеня? Не помню. Мне это показалось очень точным: счастье это — любовь, семья, друзья… Обязательно — хорошо известное, обыкновенное, никакой экзотики…', '8. «Что может быть проще примитивного нуль-передатчика? Только примитивный нуль-аккумулятор.»', '9. …Слуха у него нет. Поет он просто безобразно. И это даже хорошо, потому что куда годится человек, к которому и придраться нельзя? У порядочного человека всегда должна быть этакая дырка в способностях, лучше даже несколько, и тогда он будет по-настоящему приятен. Тогда ты точно знаешь, что он не перл какой-нибудь…', '10. «…Он потёр лоб. Я же уже решал этот вопрос. Давно ещё в деревне. Я его даже два раза решал, потому что в первый раз я забыл решение, а сейчас я забыл доказательства…»']
+			for (var i = 0; i < 3; i++)
+			{
+				var slide = flick.append();
+
+				img = goog.dom.createDom('img', {src: 'img/' + (i+1) + '.png', draggable: false});
+				figcaption = goog.dom.createDom('figcaption', {textContent: caption[i]});
+				figure = goog.dom.createDom('figure', '', [img, figcaption]);
+				slide.getElement().appendChild(figure);
+			};
+
+
+			flick.select(0);
+		};
+	</script>
+</body>
+</html>
